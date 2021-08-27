@@ -2,12 +2,16 @@ import React from 'react'
 import Timeago from 'timeago-react'
 import classnames from 'classnames'
 
+import useVideos from '../hooks/useVideos'
 
-const Dashboard = ({channels, liveVideos}) => {
+const Dashboard = ({channels}) => {
+  const { liveVideos, isLoading, isError } = useVideos();
+
   const sortChannels = (channel_a, channel_b) => {
     const videoA = liveVideos.find(v => v.channel_id === channel_a.external_id);
     const videoB = liveVideos.find(v => v.channel_id === channel_b.external_id);
 
+    if(!videoA && !videoB) return 0;
     if (videoA?.live_broadcast_content && !videoB) return -1;
     if (videoB?.live_broadcast_content && !videoA) return 1;
     if (videoA?.live_broadcast_content === 'upcoming' && videoB?.live_broadcast_content === 'live') return 1;
@@ -19,7 +23,7 @@ const Dashboard = ({channels, liveVideos}) => {
     <div className="container mx-auto bg-blue-900 px-5">
       <h1 className="text-6xl mt-20">HoloNEXT</h1>
 
-      <div className="mt-5 flex gap-5 sticky top-0 py-5 px-5 bg-white text-black rounded-md overflow-x-scroll sm:overflow-x-auto">
+      <div className="mt-5 flex gap-5 sticky top-0 py-5 px-5 bg-white text-black rounded-md overflow-x-scroll sm:overflow-x-auto border-b-2">
         {channels.sort(sortChannels).map(channel => {
           const video = liveVideos.find(v => v.channel_id === channel.external_id);
           const imageClass = classnames({
@@ -32,16 +36,19 @@ const Dashboard = ({channels, liveVideos}) => {
           })
 
           return (
-            <div className="text-black flex flex-none sm:flex-grow flex-col justify-center items-center" key={channel.id}>
+            channel && (<div className="text-black flex flex-none sm:flex-grow flex-col justify-center items-center" key={channel.id}>
               <a href={video && `#video-${video.id}`} className={`w-12 sm:w-16 md:w-20 rounded-full border-4 p-1 ${imageClass}`}>
                 <img className={`object-contain rounded-full  ${offlineClass}`} src={channel.thumbnails.default.url} title={channel.title}/>
               </a>
               <div className="text-sm overflow-ellipsis sm:text-lg font-semibold mt-2">{channel.first_name}</div>
-            </div>
+            </div>)
           )
         })}
       </div>
-
+      {isLoading && (<div className="mt-10 text-center text-lg text-white">
+        Loading...
+      </div>
+      )}
       <ul className="mt-10 space-y-5 mb-48">
         {liveVideos.map(liveVideo => {
           const channel = channels.find(c => c.external_id === liveVideo.channel_id)
@@ -52,7 +59,7 @@ const Dashboard = ({channels, liveVideos}) => {
 
           const videoTime = liveVideo.live_broadcast_content === 'live' ? liveVideo.actual_start_time : liveVideo.scheduled_start_time;
 
-          return (<li className="rounded-md bg-white text-black" key={liveVideo.id}>
+          return channel && (<li className="rounded-md bg-white text-black" key={liveVideo.id}>
             <a className="relative -top-32 sm:-top-36 md:-top-40" name={`video-${liveVideo.id}`} />
             <div className="p-3">
               <div className="flex">
