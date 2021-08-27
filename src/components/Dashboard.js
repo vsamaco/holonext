@@ -74,8 +74,8 @@ const Dashboard = ({channels}) => {
                 </div>
               </div>
               <div className="flex flex-col mt-3">
-                <a href={`https://youtu.be/${liveVideo.external_id}`} target="_blank">
-                  <img className="w-full" src={liveVideo.thumbnails.medium.url} title={liveVideo.title} />
+                <a className="overflow-hidden" href={`https://youtu.be/${liveVideo.external_id}`} target="_blank">
+                  <img className="w-full -my-10 sm:-my-16" src={`https://img.youtube.com/vi/${liveVideo.external_id}/0.jpg`} title={liveVideo.title} />
                 </a>
               </div>
             </div>

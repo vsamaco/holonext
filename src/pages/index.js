@@ -20,7 +20,7 @@ export default function Home({channels}) {
         <title>HoloNEXT</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="fixed top-5 right-5">
+      <div className="absolute top-5 right-5">
         <button disabled={isValidatingVideos} onClick={refreshData} className={`bg-gray-300 p-2 w-10 rounded-full ${isValidatingVideos ? 'text-red-300 animate-spin': 'text-black'}`}>
           <RefreshIcon />
         </button>
